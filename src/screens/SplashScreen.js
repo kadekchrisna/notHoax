@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { StatusBar, StyleSheet, View, TouchableOpacity } from 'react-native';
-import { Text, Button, Container, Content } from 'native-base';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
+import { getMyValue } from '../storages';
 
 export default class Splash extends Component {
     static navigationOptions = {
@@ -12,14 +12,26 @@ export default class Splash extends Component {
         super(props);
         this.state = {
         };
+        this.performTimeConsumingTask();
     }
 
-    componentDidMount(){
-        setInterval(() => {
-            this.props.navigation.navigate('Home')
-          }, 1000);
+    async componentDidMount() {
+        const token = await getMyValue('token')
+        console.log(token);``
+        if (token) {
+            this.props.getUserData(token);
+        }
+
     }
 
+    performTimeConsumingTask = async () => {
+        setTimeout(
+            () => {
+                this.props.navigation.navigate('App')
+            },
+            1000
+        )
+    }
 
     render() {
         return (

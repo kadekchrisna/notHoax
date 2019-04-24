@@ -1,20 +1,49 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableWithoutFeedback, TextInput, SafeAreaView, StatusBar, TouchableOpacity, KeyboardAvoidingView, BackHandler } from 'react-native';
-import { Button } from 'native-base';
+import { Toast, Button } from 'native-base';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default class Login extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            email: 'l@gmail.com',
-            password: '123456'
+            email: 'k@gmail.com',
+            password: '123456',
         };
     }
+
+    componentDidMount() {
+        this.props.navigation.addListener('didFocus', () => {
+
+
+        })
+    }
+
+    login = () => {
+        this.props.loginUser(this.state.email, this.state.password)
+        if (this.props.isLoading == false) {
+            Toast.show({
+                text: 'Welcome back',
+                duration: 1500
+            })
+            this.props.navigation.navigate('App')
+
+        }
+    }
+
+
+
 
     render() {
         return (
             <SafeAreaView style={styles.container}>
+                <Spinner
+                    visible={this.props.isLoading}
+                    textContent={'Logging In...'}
+                    textStyle={styles.spinnerTextStyle}
+                    color={'black'}
+                />
                 <StatusBar backgroundColor="#E7E7E7" barStyle="dark-content" />
                 <KeyboardAvoidingView behavior='height' style={styles.container}>
                     <TouchableWithoutFeedback style={styles.container}>
@@ -43,7 +72,7 @@ export default class Login extends Component {
                                 autoCorrect={false}
                                 ref={'txtPassword'}
                             />
-                            <Button block style={styles.buttonLogin} onPress={() => alert('login')}>
+                            <Button block style={styles.buttonLogin} onPress={() => this.login()}>
                                 <Text style={styles.buttonText}>Log In</Text>
                             </Button>
                         </View>
@@ -62,6 +91,9 @@ const styles = StyleSheet.create({
         color: '#000',
         marginBottom: 20,
         paddingHorizontal: 10
+    },
+    spinnerTextStyle: {
+        color: '#000',
     },
     title: {
         fontSize: 22,

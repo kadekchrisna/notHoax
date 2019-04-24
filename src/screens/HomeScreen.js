@@ -8,7 +8,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 import { requestCameraPermission } from '../components/Permissions'
 
-const BUTTONS = ["Option 0", "Option 1", "Option 2", "Delete", "Cancel"];
+const BUTTONS = ["Option", "Cancel"];
 const DESTRUCTIVE_INDEX = 3;
 const CANCEL_INDEX = 4;
 
@@ -34,10 +34,10 @@ export default class Home extends Component {
                 options: BUTTONS,
                 cancelButtonIndex: CANCEL_INDEX,
                 destructiveButtonIndex: DESTRUCTIVE_INDEX,
-                title: "Testing ActionSheet"
+                title: "Options"
             },
             buttonIndex => {
-                if (BUTTONS[buttonIndex] == 'Option 0') {
+                if (BUTTONS[buttonIndex] == 'Option') {
                     alert('here')
                 }
             }
@@ -48,72 +48,70 @@ export default class Home extends Component {
         return (
 
             <Container>
-                <Root>
-                    <Header style={styles.header} >
-                        <Left>
-                            <TouchableOpacity style={styles.iconCart} onPress={() => this.props.navigation.openDrawer()}>
-                                <FontAwesome name="bars" size={24} color='black' />
-                            </TouchableOpacity>
-                        </Left>
-                        <Right>
-                            <TouchableOpacity style={styles.iconCart} onPress={() => alert('add')}>
-                                <FontAwesome name="plus" size={24} color='black' />
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.iconCart} onPress={() => alert('search')}>
-                                <FontAwesome name="search" size={24} color='black' />
-                            </TouchableOpacity>
-                        </Right>
-                    </Header>
-                    <Content>
-                        <StatusBar backgroundColor="white" barStyle="dark-content" />
-                        <View style={styles.container}>
-                            <Card>
-                                <CardItem bordered style={{}}>
-                                    <Left>
-                                        <Thumbnail square small source={{ uri: 'https://freeiconshop.com/wp-content/uploads/edd/earth-outline-filled.png' }} />
-                                        <Body>
-                                            <Text note>Earth-chan {this.state.clicked}</Text>
-                                        </Body>
-                                    </Left>
-                                    <Right>
-                                        <TouchableOpacity>
-                                            <FontAwesome name="ellipsis-v" size={18} color='black' onPress={() => this.toggleModal()} />
-                                        </TouchableOpacity>
-                                    </Right>
-                                </CardItem>
-                                <CardItem header button onPress={() => this.toggleModal()}>
-                                    <Thumbnail source={{ uri: 'http://chittagongit.com//images/avatar-icon/avatar-icon-4.jpg' }} />
-                                    <Left>
-                                        <Body>
-                                            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Earth is Round Like Saturn!!</Text>
-                                            <Text note>GeekyAnts</Text>
-                                        </Body>
-                                    </Left>
-                                </CardItem>
-                                <CardItem cardBody button onPress={() => this.props.navigation.navigate('Detail')}>
-                                    <Image source={{ uri: 'https://www.insertcart.com/wp-content/uploads/2018/05/thumbnail.jpg' }} style={{ height: 200, width: null, flex: 1 }} />
-                                </CardItem>
-                                <CardItem>
-                                    <View style={styles.containerIcon}>
+                <Header style={styles.header} >
+                    <Left>
+                        <TouchableOpacity style={styles.iconCart} onPress={() => this.props.navigation.openDrawer()}>
+                            <FontAwesome name="bars" size={24} color='black' />
+                        </TouchableOpacity>
+                    </Left>
+                    <Right>
+                        <TouchableOpacity style={styles.iconCart} onPress={() => this.props.navigation.navigate('AddPost')}>
+                            <FontAwesome name="plus" size={24} color='black' />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.iconCart} onPress={() => alert('search')}>
+                            <FontAwesome name="search" size={24} color='black' />
+                        </TouchableOpacity>
+                    </Right>
+                </Header>
+                <Content>
+                    <StatusBar backgroundColor="white" barStyle="dark-content" />
+                    <View style={styles.container}>
+                        <Card>
+                            <CardItem bordered style={{}}>
+                                <Left>
+                                    <Thumbnail square small source={{ uri: 'https://freeiconshop.com/wp-content/uploads/edd/earth-outline-filled.png' }} />
+                                    <Body>
+                                        <Text note>Earth</Text>
+                                    </Body>
+                                </Left>
+                                <Right>
+                                    <TouchableOpacity>
+                                        <FontAwesome name="ellipsis-v" size={18} color='black' onPress={() => this.toggleModal()} />
+                                    </TouchableOpacity>
+                                </Right>
+                            </CardItem>
+                            <CardItem header button onPress={() => this.toggleModal()}>
+                                <Thumbnail source={{ uri: 'http://chittagongit.com//images/avatar-icon/avatar-icon-4.jpg' }} />
+                                <Left>
+                                    <Body>
+                                        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Earth is Round Like Saturn!!</Text>
+                                        <Text note>GeekyAnts</Text>
+                                    </Body>
+                                </Left>
+                            </CardItem>
+                            <CardItem cardBody button onPress={() => this.props.navigation.navigate('Detail')}>
+                                <Image source={{ uri: 'https://www.insertcart.com/wp-content/uploads/2018/05/thumbnail.jpg' }} style={{ height: 200, width: null, flex: 1 }} />
+                            </CardItem>
+                            <CardItem>
+                                <View style={styles.containerIcon}>
 
-                                        <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.props.navigation.navigate('Join')}>
-                                            <MaterialCommunityIcons name="thumb-up" size={24} color='black' />
-                                            <Text> 12 </Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-                                            <MaterialCommunityIcons name="thumb-down" size={24} color='black' />
-                                            <Text> 12 </Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-                                            <MaterialCommunityIcons name="comment" size={24} color='black' />
-                                            <Text> 4 </Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </CardItem>
-                            </Card>
-                        </View>
-                    </Content>
-                </Root>
+                                    <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.props.navigation.navigate('Auth')}>
+                                        <MaterialCommunityIcons name="thumb-up" size={24} color='black' />
+                                        <Text> 12 </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
+                                        <MaterialCommunityIcons name="thumb-down" size={24} color='black' />
+                                        <Text> 12 </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
+                                        <MaterialCommunityIcons name="comment" size={24} color='black' />
+                                        <Text> 4 </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </CardItem>
+                        </Card>
+                    </View>
+                </Content>
             </Container>
         );
     }

@@ -3,12 +3,9 @@ import { Platform, Dimensions } from 'react-native'
 import { createDrawerNavigator, createAppContainer } from 'react-navigation'
 
 import Home from '../screens/HomeScreen';
+import Sidebar from '../components/SidebarContainers';
 
 const WIDTH = Dimensions.get('window').width;
-
-const DrawerConfig = {
-    drawerWidth: WIDTH * 0.7,
-}
 
 const DrawerNavigator = createDrawerNavigator(
     {
@@ -16,8 +13,11 @@ const DrawerNavigator = createDrawerNavigator(
             screen: Home
         }
     },{
-        DrawerConfig
-    }
+        drawerWidth: WIDTH * 0.6,
+        initialRouteName: 'Home',
+        contentComponent: props => <Sidebar {...props} />
+    },
+
 )
 
 export default DrawerNavigator;

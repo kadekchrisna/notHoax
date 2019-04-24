@@ -35,7 +35,7 @@ export default class Join extends Component {
                     </Button>
                 </View>
                 <View style={{ flex: 0.1, flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', }}>
-                    <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Home')}>
                         <Text style={{ fontSize: 12, color: '#CECECE', marginBottom: 16, fontFamily: 'ubuntu' }}> Not now </Text>
                     </TouchableOpacity>
                 </View>

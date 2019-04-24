@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableWithoutFeedback, TextInput, SafeAreaView, StatusBar, TouchableOpacity, KeyboardAvoidingView, BackHandler } from 'react-native';
 import { Button } from 'native-base';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default class Register extends Component {
 
@@ -14,10 +15,30 @@ export default class Register extends Component {
         };
     }
 
+
+    onValidate = () => {
+        if (this.state.password === this.state.confPassword) {
+            this.props.registerUser(this.state.username, this.state.email, this.state.password) 
+            Toast.show({
+                text: 'Hi and Welcome',
+                duration: 1500
+            })
+            return this.props.navigation.navigate('Home')
+                      
+        }
+        return Alert.alert('Password and confirmation password must be same!')
+    }
+
     render() {
         return (
             <SafeAreaView style={styles.container}>
-                <StatusBar backgroundColor="#E7E7E7" barStyle="dark-content" />
+                <Spinner
+                    visible={this.props.isLoading}
+                    textContent={'Signing you up...'}
+                    textStyle={styles.spinnerTextStyle}
+                    color={'black'}
+                />
+                <StatusBar backgroundColor="white" barStyle="dark-content" />
                 <KeyboardAvoidingView behavior='height' style={styles.container}>
                     <TouchableWithoutFeedback style={styles.container}>
                         <View>
@@ -68,7 +89,7 @@ export default class Register extends Component {
                                 autoCorrect={false}
                                 ref={'txtPassword'}
                             />
-                            <Button block style={styles.buttonLogin} onPress={() => alert('login')}>
+                            <Button block style={styles.buttonLogin} onPress={() => this.onValidate()}>
                                 <Text style={styles.buttonText}>Sign Up</Text>
                             </Button>
                         </View>
