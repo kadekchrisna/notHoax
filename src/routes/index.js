@@ -1,6 +1,6 @@
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 
-import Detail from '../screens/DetailScreen'
+import Detail from '../screens/DetailContainers'
 import Home from '../screens/HomeScreen'
 import Drawer from './DrawerNavigator'
 import Join from '../screens/JoinScreen'
@@ -8,7 +8,9 @@ import Login from '../screens/LoginContainers'
 import Register from '../screens/RegisterContainers'
 import Splash from '../screens/SplashContainers'
 import AddPost from '../screens/AddPostContainers'
+import AddPostCategory from '../screens/AddPostCategoryContainers'
 import Account from '../screens/AccountContainers'
+
 
 const authStack = createStackNavigator(
     {
@@ -52,9 +54,9 @@ const appStack = createStackNavigator(
         },
         AddPost: {
             screen: AddPost,
-            navigationOptions: {
-                title: 'Add Post'
-            }
+        },
+        AddPostCategory: {
+            screen: AddPostCategory,
         },
         Account: {
             screen: Account,

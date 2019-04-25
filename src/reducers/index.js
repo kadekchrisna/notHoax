@@ -1,4 +1,7 @@
 import { combineReducers } from 'redux';
 
 import account from './AccountReducers'
-export default combineReducers({account})
+import post from './PostReduces'
+import category from './CategoryReducers'
+
+export default combineReducers({account, post, category})

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, StatusBar, Alert } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, StatusBar, FlatList } from 'react-native';
 import { Container, Content, Card, CardItem, Button, Thumbnail } from 'native-base'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { BASE_IMAGE_URL } from 'react-native-dotenv';
+
 
 // import {getMyValue} from '../storages'
 
@@ -9,17 +11,22 @@ export default class Sidebar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            
+
         };
     }
+    componentDidMount() {
+        this.props.navigation.addListener('didFocus', () => {
+            this.props.getAllCategories()
+        })
 
+    }
     renderLogin = () => {
         if (this.props.isLoggedIn) {
-            const { username, image } = this.props.user
-            
+            const { username, pp } = this.props.user
+
             return (
                 <TouchableOpacity style={styles.listIcons} onPress={() => this.props.navigation.navigate('Account')}>
-                    <Thumbnail style={{ width: 30, height: 30, }} source={{ uri: image }} />
+                    <Thumbnail style={{ width: 30, height: 30, }} source={{ uri: `${BASE_IMAGE_URL}profile/${pp}` }} />
                     <Text style={styles.nameIcons}>{username}</Text>
                 </TouchableOpacity>
             )
@@ -27,9 +34,9 @@ export default class Sidebar extends Component {
 
             return (
                 <TouchableOpacity style={styles.listIcons} onPress={() => { this.props.navigation.navigate('Auth') }}>
-                    <Thumbnail square style={{ width: 30, height: 30, }} source={{ uri: 'http://chittagongit.com//images/avatar-icon/avatar-icon-4.jpg' }} />
+                    <Thumbnail square style={{ width: 30, height: 30, }} source={{ uri: `${BASE_IMAGE_URL}profile/thumbpp.jpg` }} />
                     <Text style={styles.nameIcons}>Sign In</Text>
-                </TouchableOpacity> 
+                </TouchableOpacity>
             )
         }
 
@@ -56,14 +63,18 @@ export default class Sidebar extends Component {
                         <View style={{ paddingBottom: '2%', }}>
                             <Text>Sections</Text>
                         </View>
-                        <TouchableOpacity style={styles.listIcons}>
-                            <Thumbnail square style={{ width: 30, height: 30, }} source={{ uri: 'http://chittagongit.com//images/avatar-icon/avatar-icon-4.jpg' }} />
-                            <Text style={styles.nameIcons}>People</Text>
-                        </TouchableOpacity> 
-                        <TouchableOpacity style={styles.listIcons}>
-                            <Thumbnail square style={{ width: 30, height: 30, }} source={{ uri: 'https://freeiconshop.com/wp-content/uploads/edd/earth-outline-filled.png' }} />
-                            <Text style={styles.nameIcons}>Earth</Text>
-                        </TouchableOpacity>
+                        <FlatList
+                            data={this.props.categories}
+                            renderItem={({ item }) =>
+                                (
+                                    <TouchableOpacity style={styles.listIcons}>
+                                        <Thumbnail square style={{ width: 30, height: 30, }} source={{ uri: `${BASE_IMAGE_URL}categories/${item.cover}` }} />
+                                        <Text style={styles.nameIcons}>{item.name}</Text>
+                                    </TouchableOpacity>
+                                )
+                            }
+                            keyExtractor={item => item.id.toString()}
+                        />
                     </View>
                 </Content>
             </Container>
@@ -110,7 +121,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         marginVertical: '1%',
     },
     nameIcons: {

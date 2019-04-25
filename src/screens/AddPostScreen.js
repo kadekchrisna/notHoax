@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, Image, Button } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
-import { } from 'native-base';
+import { Textarea, CardItem, Item, Input, Content, Container, Card, Button } from 'native-base';
+
+import { BASE_IMAGE_URL } from 'react-native-dotenv';
+
 
 const options = {
     title: 'Select Post Picture',
@@ -15,22 +18,37 @@ const options = {
 };
 
 export default class AddPost extends Component {
+    static navigationOptions = {
+        headerTitle: 'Add Post '
+    };
     constructor(props) {
         super(props);
         this.state = {
-            avatarSource: null
+            avatarSource: null,
+            image: `${BASE_IMAGE_URL}image.png`,
+            title: '',
+            descriptions: '',
         };
     }
     componentDidMount() {
-
-    }
-
-    componentWillMount(){
         this.props.navigation.addListener('didFocus', () => {
             if (this.props.isLoggedIn == false) {
                 this.props.navigation.navigate('Auth')
             }
         })
+
+    }
+
+    toCategories = () => {
+        this.props.navigation.navigate('AddPostCategory', {
+            title: this.state.title, 
+            avatarSource: this.state.avatarSource, 
+            descriptions: this.state.descriptions
+        });
+    }
+
+    componentWillMount() {
+
     }
 
 
@@ -46,12 +64,13 @@ export default class AddPost extends Component {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
                 const source = { uri: response.uri };
-                console.log(response)
+                // console.log(response)
                 // You can also display the image using data:
                 // const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
                 this.setState({
-                    avatarSource: response.uri,
+                    avatarSource: source,
+                    image: response.uri
                 });
             }
         });
@@ -62,14 +81,33 @@ export default class AddPost extends Component {
     render() {
 
         return (
-            <View>
-                <Text> Add Post </Text>
-                {
-                    this.state.avatarSource && <Image source={{ uri: this.state.avatarSource }} style={{ width: '80%', height: 200, resizeMode: 'contain' }} />
-                }
+            <Container>
+                <Content>
+                    <View style={styles.container}>
+                        <Item style={{ marginVertical: 8, }}>
+                            <Input placeholder="Post title" onChangeText={(text) => this.setState({ title: text })} value={this.state.title} />
+                        </Item>
 
-                <Button title='Select Image' onPress={() => this.selectImage()} />
-            </View>
+                        <Textarea style={{ marginVertical: 8, }} rowSpan={5} bordered placeholder="Descriptions" onChangeText={(text) => this.setState({ descriptions: text })} value={this.state.descriptions} />
+                        <Card>
+                            <CardItem cardBody button onPress={() => this.selectImage()}>
+                                <Image source={{ uri: this.state.image }} style={{ height: 200, width: '100%', resizeMode: 'contain' }} />
+                            </CardItem>
+                        </Card>
+                        <Button block style={{ backgroundColor: 'black', marginVertical: 8, }} onPress={() => this.toCategories()}>
+                            <Text style={{ color: 'white' }}>Next</Text>
+                        </Button>
+                    </View>
+                </Content>
+            </Container>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        flexDirection: 'column',
+        paddingHorizontal: 8,
+    }
+})

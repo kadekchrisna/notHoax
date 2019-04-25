@@ -1,11 +1,12 @@
 
 import React, { Component } from 'react';
-import { StyleSheet, TouchableOpacity, Image, Modal, TouchableHighlight, Alert, StatusBar } from 'react-native';
+import { StyleSheet, TouchableOpacity, Image, Modal, FlatList, Alert, StatusBar } from 'react-native';
 import { Root, Container, Header, Text, View, ActionSheet, Content, Left, Right, Card, CardItem, Body, Button, Thumbnail, Icon } from 'native-base';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { BASE_IMAGE_URL } from 'react-native-dotenv';
 
-
+import { getTimeAgo } from '../components/GetTimeAgo'
 import { requestCameraPermission } from '../components/Permissions'
 
 const BUTTONS = ["Option", "Cancel"];
@@ -25,6 +26,10 @@ export default class Home extends Component {
     }
 
     async componentDidMount() {
+
+        this.props.navigation.addListener('didFocus', () => {
+            this.props.getAllPosts()
+        })
         await requestCameraPermission()
     }
 
@@ -66,50 +71,63 @@ export default class Home extends Component {
                 <Content>
                     <StatusBar backgroundColor="white" barStyle="dark-content" />
                     <View style={styles.container}>
-                        <Card>
-                            <CardItem bordered style={{}}>
-                                <Left>
-                                    <Thumbnail square small source={{ uri: 'https://freeiconshop.com/wp-content/uploads/edd/earth-outline-filled.png' }} />
-                                    <Body>
-                                        <Text note>Earth</Text>
-                                    </Body>
-                                </Left>
-                                <Right>
-                                    <TouchableOpacity>
-                                        <FontAwesome name="ellipsis-v" size={18} color='black' onPress={() => this.toggleModal()} />
-                                    </TouchableOpacity>
-                                </Right>
-                            </CardItem>
-                            <CardItem header button onPress={() => this.toggleModal()}>
-                                <Thumbnail source={{ uri: 'http://chittagongit.com//images/avatar-icon/avatar-icon-4.jpg' }} />
-                                <Left>
-                                    <Body>
-                                        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Earth is Round Like Saturn!!</Text>
-                                        <Text note>GeekyAnts</Text>
-                                    </Body>
-                                </Left>
-                            </CardItem>
-                            <CardItem cardBody button onPress={() => this.props.navigation.navigate('Detail')}>
-                                <Image source={{ uri: 'https://www.insertcart.com/wp-content/uploads/2018/05/thumbnail.jpg' }} style={{ height: 200, width: null, flex: 1 }} />
-                            </CardItem>
-                            <CardItem>
-                                <View style={styles.containerIcon}>
 
-                                    <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.props.navigation.navigate('Auth')}>
-                                        <MaterialCommunityIcons name="thumb-up" size={24} color='black' />
-                                        <Text> 12 </Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-                                        <MaterialCommunityIcons name="thumb-down" size={24} color='black' />
-                                        <Text> 12 </Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-                                        <MaterialCommunityIcons name="comment" size={24} color='black' />
-                                        <Text> 4 </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </CardItem>
-                        </Card>
+                        <FlatList
+                            data={this.props.posts}
+                            renderItem={({ item }) =>
+                                (
+                                    <Card>
+                                        <CardItem bordered >
+                                            <Left>
+                                                <Thumbnail square small source={{ uri: `${BASE_IMAGE_URL}categories/${item.cover}` }} />
+                                                <Body>
+                                                    <Text note>{item.name}</Text>
+                                                </Body>
+                                            </Left>
+                                            <Right>
+                                                <TouchableOpacity>
+                                                    <FontAwesome name="ellipsis-v" size={18} color='black' onPress={() => this.toggleModal()} />
+                                                </TouchableOpacity>
+                                            </Right>
+                                        </CardItem>
+                                        <CardItem header button onPress={() => this.toggleModal()}>
+                                            <Thumbnail source={{ uri: `${BASE_IMAGE_URL}profile/${item.pp}` }} />
+                                            <Left>
+                                                <Body>
+                                                    <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{item.title}</Text>
+                                                    <Text note>{item.username}   {String(getTimeAgo(item.created_at))}</Text> 
+                                                </Body>
+                                            </Left>
+                                        </CardItem>
+                                        <CardItem cardBody button onPress={() => this.props.navigation.navigate('Detail', {
+                                            id: item.id
+                                        })}>
+                                            <Image source={{ uri: `${BASE_IMAGE_URL}posts/${item.image}` }} style={{ height: 200, width: null, flex: 1 }} />
+                                        </CardItem>
+                                        <CardItem>
+                                            <View style={styles.containerIcon}>
+
+                                                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }} >
+                                                    <MaterialCommunityIcons name="thumb-up" size={24} color='black' />
+                                                    <Text> {item.up} </Text>
+                                                </View>
+                                                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }} >
+                                                    <MaterialCommunityIcons name="thumb-down" size={24} color='black' />
+                                                    <Text> {item.down} </Text>
+                                                </View>
+                                                <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }} >
+                                                    <MaterialCommunityIcons name="comment" size={24} color='black' />
+                                                    <Text> {item.comments} </Text>
+                                                </View>
+                                            </View>
+                                        </CardItem>
+                                    </Card>
+
+                                )
+                            }
+                            keyExtractor={item => item.id.toString()}
+                        />
+
                     </View>
                 </Content>
             </Container>

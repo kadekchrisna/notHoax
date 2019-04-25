@@ -1,11 +1,67 @@
 
 import React, { Component } from 'react';
-import { StyleSheet, TouchableOpacity, Image, Modal, TouchableHighlight, Alert, StatusBar } from 'react-native';
+import { StyleSheet, TouchableOpacity, Image, Modal, FlatList, Alert, StatusBar } from 'react-native';
 import { Root, Container, Header, View, Text, ActionSheet, Content, Left, Right, Card, CardItem, Body, Input, Thumbnail, Item, Tabs, Tab, ScrollableTab } from 'native-base';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { WaveIndicator } from 'react-native-indicators';
+import { BASE_IMAGE_URL } from 'react-native-dotenv';
+
+import { getTimeAgo } from '../components/GetTimeAgo'
+import { getMyValue } from '../storages';
+
 
 export default class Detail extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            comment: ''
+        }
+    }
+
+    componentDidMount() {
+        this.props.navigation.addListener('didFocus', () => {
+            const id = this.props.navigation.getParam('id', '');
+            this.props.getPost(id);
+        })
+    }
+
+    postComment = async (id) => {
+        const token = await getMyValue('token')
+        console.log(token);
+
+        if (token) {
+            this.props.postComment(this.state.comment, id, token)
+            this.setState({ comment: '' })
+
+
+        }
+    }
+
+    toUpvote = async (id) => {
+        const token = await getMyValue('token')
+        console.log(token);
+        if (token) {
+            this.props.upvote(id, token)
+        }
+    }
+
+    toDownvote = async (id) => {
+        const token = await getMyValue('token')
+        console.log(token);
+        if (token) {
+            this.props.downvote(id, token)
+        }
+
+    }
+
     render() {
+        if (this.props.isLoading) return (<WaveIndicator color="black" size={60} />)
+
+        const { id, created_at, title, description, image, comments, name, cover, username, pp } = this.props.details
+        const { up, down } = this.props.opinions
+
         return (
 
             <Container>
@@ -15,14 +71,14 @@ export default class Detail extends Component {
                     marginBottom: 102,
                 }}>
                     <Content>
-                    <StatusBar backgroundColor="white" barStyle="dark-content" />
+                        <StatusBar backgroundColor="white" barStyle="dark-content" />
                         <View style={styles.container}>
                             <Card>
                                 <CardItem bordered style={{}}>
                                     <Left>
-                                        <Thumbnail square small source={{ uri: 'https://freeiconshop.com/wp-content/uploads/edd/earth-outline-filled.png' }} />
+                                        <Thumbnail square small source={{ uri: `${BASE_IMAGE_URL}categories/${cover}` }} />
                                         <Body>
-                                            <Text note>Earth-chan</Text>
+                                            <Text note>{name}</Text>
                                         </Body>
                                     </Left>
                                     <Right>
@@ -32,46 +88,38 @@ export default class Detail extends Component {
                                     </Right>
                                 </CardItem>
                                 <CardItem header button onPress={() => alert('here')}>
-                                    <Thumbnail source={{ uri: 'http://chittagongit.com//images/avatar-icon/avatar-icon-4.jpg' }} />
+                                    <Thumbnail source={{ uri: `${BASE_IMAGE_URL}profile/${pp}` }} />
                                     <Left>
                                         <Body>
-                                            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Earth is Round Like Saturn!!</Text>
-                                            <Text note>GeekyAnts</Text>
+                                            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{title}</Text>
+                                            <Text note>{username}   {String(getTimeAgo(created_at))}</Text>
                                         </Body>
                                     </Left>
                                 </CardItem>
                                 <CardItem cardBody button onPress={() => alert('here')}>
-                                    <Image source={{ uri: 'https://www.insertcart.com/wp-content/uploads/2018/05/thumbnail.jpg' }} style={{ height: 200, width: null, flex: 1 }} />
+                                    <Image source={{ uri: `${BASE_IMAGE_URL}posts/${image}` }} style={{ height: 200, width: null, flex: 1 }} />
                                 </CardItem>
                                 <CardItem>
                                     <Tabs renderTabBar={() => <ScrollableTab tabsContainerStyle={{ alignItems: 'stretch', justifyContent: 'flex-start', backgroundColor: 'white' }} underlineStyle={{ backgroundColor: 'black' }} />} >
                                         <Tab heading="Description" tabStyle={{ backgroundColor: 'white' }} activeTabStyle={{ backgroundColor: 'white' }} activeTextStyle={{ color: 'black' }} textStyle={{ color: '#A5A5A5' }} >
-                                            <Text textAlign='justify'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris laoreet sem eget posuere ultrices. Proin porttitor nisi non ligula egestas finibus. Curabitur dapibus non est et maximus. Proin sit amet maximus purus, placerat blandit mi. Sed iaculis nisl tellus, vel interdum magna ornare quis. Donec ac magna vehicula, vestibulum ex ut, lacinia ex. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Mauris non augue diam.
-
-    Suspendisse neque orci, laoreet eu aliquet quis, mattis sed est. Suspendisse metus felis, malesuada vel augue ac, scelerisque congue dui. In mollis, metus vitae euismod tempus, leo mauris porttitor tortor, ac tempor felis purus sed neque. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi quis mi mi. In bibendum erat dapibus, dictum risus id, posuere nibh. Integer condimentum velit est, ut accumsan quam iaculis sed. Sed placerat sit amet eros sed placerat. Phasellus sit amet mauris pellentesque velit tempor egestas vitae quis nibh. Aliquam erat volutpat. In mattis diam ac nisi elementum, et fringilla arcu sagittis.
-
-    Aenean ornare quis ipsum viverra tristique. Vivamus scelerisque augue ornare, pellentesque sem in, consequat leo. Praesent vehicula in quam in molestie. Fusce tempus libero sit amet nisi dapibus pretium. Curabitur suscipit, nulla eu faucibus dictum, ante lectus molestie lacus, id sollicitudin arcu turpis sit amet eros. Duis ut hendrerit ex, at bibendum purus. Duis gravida magna orci, ut aliquet neque accumsan at. Suspendisse mollis, diam eu elementum bibendum, tortor dolor vulputate massa, et ultricies erat orci at odio. Aliquam a congue lectus, at porta quam. Vestibulum ornare tortor sed fringilla suscipit. Integer quis nibh est. Nullam gravida accumsan velit a aliquam. Donec convallis sapien vitae laoreet luctus. Pellentesque at nisi ut est blandit posuere.
-
-    Sed luctus, lacus sit amet gravida porta, sem tortor elementum orci, vitae varius orci enim non turpis. Suspendisse euismod nec arcu ut gravida. Donec tristique lectus eleifend, tempus velit eget, condimentum metus. Pellentesque sodales efficitur arcu, vitae condimentum massa. In hac habitasse platea dictumst. Sed cursus, dui faucibus luctus pulvinar, est risus egestas enim, vel tempus eros ex a dolor. Sed viverra massa risus, in iaculis eros luctus non. Integer ultrices purus et fringilla cursus. Aenean vulputate venenatis rutrum.
-
-Nunc ullamcorper justo leo, vel dictum urna imperdiet sit amet. Interdum et malesuada fames ac ante ipsum primis in faucibus. Donec ut tristique nisi. Suspendisse malesuada orci urna, ac convallis lectus hendrerit a. In elementum ullamcorper tortor, ac iaculis ipsum pellentesque non. Vestibulum arcu libero, congue id urna in, facilisis sodales purus. Mauris sem purus, sodales ac pharetra eu, ultrices id dui. Nullam fermentum ultricies elit ac fringilla. Nullam ultricies diam eget euismod tristique. Aliquam fringilla dolor sit amet feugiat imperdiet. Aliquam elementum purus arcu, a volutpat urna condimentum eget. Quisque vestibulum volutpat mi, eget pellentesque tortor fringilla eget. In et urna eget libero posuere suscipit nec sed felis. </Text>
+                                            <Text textAlign='justify'>{description}</Text>
                                         </Tab>
                                     </Tabs>
                                 </CardItem>
                                 <CardItem>
                                     <View style={styles.containerIcon}>
 
-                                        <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-                                            <FontAwesome name="thumbs-o-up" size={24} color='black' />
-                                            <Text> 12 </Text>
+                                        <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.toUpvote(id)}>
+                                            <MaterialCommunityIcons name="thumb-up-outline" size={24} color='black' />
+                                            <Text> {String(up)} </Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.toDownvote(id) }>
+                                            <MaterialCommunityIcons name="thumb-down-outline" size={24} color='black' />
+                                            <Text> {String(down)} </Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-                                            <FontAwesome name="thumbs-o-down" size={24} color='black' />
-                                            <Text> 12 </Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={{ flex: 1, flexDirection: 'row', justifyContent: 'center' }}>
-                                            <FontAwesome name="commenting-o" size={24} color='black' />
-                                            <Text> 4 </Text>
+                                            <MaterialCommunityIcons name="comment" size={24} color='black' />
+                                            <Text> {comments} </Text>
                                         </TouchableOpacity>
                                     </View>
                                 </CardItem>
@@ -79,66 +127,27 @@ Nunc ullamcorper justo leo, vel dictum urna imperdiet sit amet. Interdum et male
                         </View>
                         <View style={styles.container}>
                             <Card>
-                                <CardItem bordered style={{}}>
-                                    <Left style={{ flex: 1, alignItems: 'stretch', justifyContent: 'flex-start' }}>
-                                        <Thumbnail square small source={{ uri: 'https://freeiconshop.com/wp-content/uploads/edd/earth-outline-filled.png' }} />
-                                        <Body style={{ flex: 1, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
-                                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-                                                <Text style={{ fontWeight: 'bold' }}>Earth-chan</Text>
-                                                <Text> 4 min ago </Text>
-                                            </View>
-                                            <Text style={{ flex: 1, }}>Yea right</Text>
-                                        </Body>
-                                    </Left>
-                                </CardItem>
-                                <CardItem bordered style={{}}>
-                                    <Left style={{ flex: 1, alignItems: 'stretch', justifyContent: 'flex-start' }}>
-                                        <Thumbnail square small source={{ uri: 'https://freeiconshop.com/wp-content/uploads/edd/earth-outline-filled.png' }} />
-                                        <Body style={{ flex: 1, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
-                                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-                                                <Text style={{ fontWeight: 'bold' }}>Earth-chan lovers</Text>
-                                                <Text> 4 min ago </Text>
-                                            </View>
-                                            <Text style={{ flex: 1, }}>I told u so</Text>
-                                        </Body>
-                                    </Left>
-                                </CardItem>
-                                <CardItem bordered style={{}}>
-                                    <Left style={{ flex: 1, alignItems: 'stretch', justifyContent: 'flex-start' }}>
-                                        <Thumbnail square small source={{ uri: 'https://freeiconshop.com/wp-content/uploads/edd/earth-outline-filled.png' }} />
-                                        <Body style={{ flex: 1, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
-                                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-                                                <Text style={{ fontWeight: 'bold' }}>Earth-chan lovers</Text>
-                                                <Text> 4 min ago </Text>
-                                            </View>
-                                            <Text style={{ flex: 1, }}>I told u so</Text>
-                                        </Body>
-                                    </Left>
-                                </CardItem>
-                                <CardItem bordered style={{}}>
-                                    <Left style={{ flex: 1, alignItems: 'stretch', justifyContent: 'flex-start' }}>
-                                        <Thumbnail square small source={{ uri: 'https://freeiconshop.com/wp-content/uploads/edd/earth-outline-filled.png' }} />
-                                        <Body style={{ flex: 1, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
-                                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-                                                <Text style={{ fontWeight: 'bold' }}>Earth-chan lovers</Text>
-                                                <Text> 4 min ago </Text>
-                                            </View>
-                                            <Text style={{ flex: 1, }}>I told u so</Text>
-                                        </Body>
-                                    </Left>
-                                </CardItem>
-                                <CardItem bordered style={{}}>
-                                    <Left style={{ flex: 1, alignItems: 'stretch', justifyContent: 'flex-start' }}>
-                                        <Thumbnail square small source={{ uri: 'https://freeiconshop.com/wp-content/uploads/edd/earth-outline-filled.png' }} />
-                                        <Body style={{ flex: 1, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
-                                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
-                                                <Text style={{ fontWeight: 'bold' }}>Earth-chan lovers</Text>
-                                                <Text> 4 min ago </Text>
-                                            </View>
-                                            <Text style={{ flex: 1, }}>I told u so</Text>
-                                        </Body>
-                                    </Left>
-                                </CardItem>
+                                <FlatList
+                                    data={this.props.comments}
+                                    renderItem={({ item }) =>
+                                        (
+                                            <CardItem bordered style={{}}>
+                                                <Left style={{ flex: 1, alignItems: 'stretch', justifyContent: 'flex-start' }}>
+                                                    <Thumbnail square small source={{ uri: `${BASE_IMAGE_URL}profile/${item.pp}` }} />
+                                                    <Body style={{ flex: 1, flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
+                                                        <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+                                                            <Text style={{ fontWeight: 'bold' }}>{item.username}</Text>
+                                                            <Text note style={{ flex: 1, paddingHorizontal: 10, fontSize: 13 }}> {String(getTimeAgo(item.created_at))} </Text>
+                                                        </View>
+                                                        <Text style={{ flex: 1 }}>{item.comment}</Text>
+                                                    </Body>
+                                                </Left>
+                                            </CardItem>
+                                        )
+                                    }
+                                    keyExtractor={item => String(item.id)}
+                                />
+
                             </Card>
                         </View>
 
@@ -149,11 +158,11 @@ Nunc ullamcorper justo leo, vel dictum urna imperdiet sit amet. Interdum et male
                     <View style={{ flex: 1, flexDirection: 'column', }}>
                         <View style={styles.buttonAdd}>
                             <Item regular>
-                                <Input placeholder='Write comment...' />
+                                <Input placeholder='Write comment...' onChangeText={(text) => this.setState({ comment: text })} value={this.state.comment} />
                             </Item>
                         </View>
                         <View style={styles.buttonCheckOut}>
-                            <TouchableOpacity style={styles.buttonContainer} >
+                            <TouchableOpacity style={styles.buttonContainer} onPress={() => this.postComment(id)} >
                                 <Text style={styles.buttonText}>Post</Text>
                             </TouchableOpacity>
                         </View>
